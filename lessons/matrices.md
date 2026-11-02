@@ -38,3 +38,24 @@ $$A^{-1} \times (A \times X) = A^{-1} \times B$$
 
 $$X = A^{-1}B$$
 
+# The Catch: When Can You Invert a Matrix?
+- Just like you can't divide a regular number by zero, not every matrix can be inverted. For a matrix to have an inverse, it must meet strict rules:
+* It must be a square matrix: It must have the exact same number of rows and columns (e.g., $2 \times 2$, $3 \times 3$). Non-square matrices cannot be inverted.
+* It must be "non-singular": Its determinant (a special scalar value calculated from the matrix elements) cannot be zero. If the determinant is $0$, the matrix is "singular," meaning it has collapsed dimensions, and its inverse simply does not exist.
+
+# What is a Dot Product?
+- A dot product takes two vectors of the exact same length, multiplies their corresponding elements together, and then adds all those products up into a single number (scalar).
+* For example, the dot product of two vectors $v = \begin{bmatrix} 1 & 2 \end{bmatrix}$ and $u = \begin{bmatrix} 5 \\ 7 \end{bmatrix}$ looks like this:
+
+$$(1 \times 5) + (2 \times 7) = 5 + 14 = 19$$
+
+# How Dot Products Build Matrix Multiplication
+- When you multiply two matrices together, every single number (element) in your final resulting matrix is born from a dot product:
+* You take a row from the first matrix.
+* You take a column from the second matrix.
+* You calculate their dot product. That single number becomes one entry in your new matrix.
+
+If you multiply a $2 \times 2$ matrix by a $2 \times 2$ matrix, you are essentially doing four separate dot products to fill in the four spots of the new grid:
+
+$$\begin{bmatrix} \text{Row 1} \\ \text{Row 2} \end{bmatrix} \times \begin{bmatrix} \text{Col 1} & \text{Col 2} \end{bmatrix} = \begin{bmatrix} (\text{Row 1} \cdot \text{Col 1}) & (\text{Row 1} \cdot \text{Col 2}) \\ (\text{Row 2} \cdot \text{Col 1}) & (\text{Row 2} \cdot \text{Col 2}) \end{bmatrix}$$
+
