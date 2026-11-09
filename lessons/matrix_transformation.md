@@ -3,7 +3,7 @@
 # Linear Transformations & The Role of Basis Vectors
 # Detailed Mathematical Foundations
 # Linear Transformations & The Role of Basis Vectors:
-- A linear transformation is a function $T: \mathbb{R}^n \to \mathbb{R}^m$ that
+- A linear transformation is a function $T: \mathbb{R}^n\to \mathbb{R}^m$ that
 preserves vector addition and scalar multiplication:
 $$T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$$$$T(c\mathbf{v}) = cT(\mathbf{v})$$
 
@@ -39,7 +39,7 @@ $\mathbf{e}_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$ to $\begin{bmatrix} \cos\t
 $$R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
 In 3D, rotations happen around principal axes:
 - Around Z-axis: $$R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
-- Around X-axis: $$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
+- Around X-axis: $$R_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & \sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}$$
 - Around Y-axis: $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}$$
 
 # Scaling
@@ -49,9 +49,8 @@ $$S = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}$$
 
 # Shearing
 - Tilts space while keeping one axis fixed.
-- Shear along x-axis (shifts $x$ by $k \cdot y$):
-$$Sh_x = \begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix}$$
-- Shear along y-axis (shifts $y$ by $k \cdot x$):
+- Shear along x-axis (shifts $x$ by $k \cdot y$): $$Sh_x = \begin{bmatrix} 1 & k \\ 0 & 1\end{bmatrix}$$
+- Shear along y-axis (shifts $y$ by $k \cdot x$): 
 $$Sh_y = \begin{bmatrix} 1 & 0 \\ k & 1 \end{bmatrix}$$
 
 # Reflection
@@ -81,4 +80,27 @@ To find eigenvalues, we solve the characteristic equation:
 $$\det(A - \lambda I) = 0$$
 
 where $I$ is the identity matrix.
+
+# Eigendecomposition
+- If an $n \times n$ matrix $A$ has $n$ linearly independent eigenvectors, it can be factored (decomposed) into:
+
+$$A = VDV^{-1}$$
+
+- $V$: A matrix whose columns are the eigenvectors of $A$.
+- $D$: A diagonal matrix whose entries are the corresponding eigenvalues $\lambda_1, \lambda_2, \dots, \lambda_n$.
+- $V^{-1}$: The inverse of the eigenvector matrix.
+
+# The Determinant as a Volume Scaling Factor
+- The determinant of a $2 \times 2$ matrix $M = \begin{bmatrix} a & c \\ b & d \end{bmatrix}$ is computed as:
+
+$$\det(M) = ad - bc$$
+
+# Geometric meaning:
+- It represents the factor by which the transformation scales areas (in 2D) or volumes (in 3D).
+- $\det = 1$: Area is preserved (e.g., pure rotations).
+- $\det > 1$: Space is expanded.
+- $0 < \det < 1$: Space is compressed.
+- $\det = 0$: Space is flattened into a lower dimension (the matrix is singular and has no inverse).
+
+- $\det < 0$: Area is scaled by $\vert{}\det\vert{}$, and orientation is flipped (e.g., reflections).
 
