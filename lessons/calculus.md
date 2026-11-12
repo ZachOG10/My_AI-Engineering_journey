@@ -47,3 +47,40 @@ Now we flip the script and treat $x$ as a constant:
 
 Putting it together:
 $$\frac{\partial f}{\partial y} = 3x + 2y$$
+
+$$\mathbf{f(x, y) = x^2 + 3xy + y^2}$$
+
+# Read aloud:
+- "f of x and y equals x squared, plus three x y, plus y squared."
+# What it means:
+- $f$ is our function (representing something like a neural network's loss), and it takes two independent inputs, $x$ and $y$. Because there are two inputs, changing $x$ or $y$ alters the output differently. To isolate them, we use partial derivatives.
+#  Finding the Partial Derivative with Respect to $x$
+
+- $$\mathbf{\frac{\partial f}{\partial x} = 2x + 3y} \quad (\text{treat } y \text{ as a constant})$$
+# Read aloud:
+- "Partial f, partial x equals two x plus three y, treating y as a constant."
+# Breaking down the symbols:
+- $\partial$ (the curly "d"): Read as "del" or "partial". Unlike an ordinary $d$, the curly symbol warns you: "This function has multiple variables, and we are only looking at the rate of change along one axis."
+- $\frac{\partial f}{\partial x}$: Read as "The partial derivative of f with respect to x" or "partial f, partial x". It literally translates to: "How fast does the output change when I nudge $x$, while locking $y$ completely frozen?"
+
+# Walking through the terms (treating $y$ as a constant):
+1. $x^2$ ("x squared"): Using the standard power rule, bring the $2$ down and subtract $1$ from the exponent to get $2x$ ("two x").
+2. $+ 3xy$ ("plus three x y"): Since $y$ is frozen as a constant, $3y$ acts as a coefficient multiplier attached to $x$ (just like $5x$). The derivative of a constant times $x$ is just the constant itself: $+ 3y$ ("plus three y").
+3. $+ y^2$ ("plus y squared"): There is no $x$ here. Because $y$ is frozen as a constant, $y^2$ is a pure, unchanging constant number. The derivative of any constant is $0$.
+
+Putting those pieces together gives us our first result: $\frac{\partial f}{\partial x} = 2x + 3y$.
+
+# Finding the Partial Derivative with Respect to $y$
+$$\mathbf{\frac{\partial f}{\partial y} = 3x + 2y} \quad (\text{treat } x \text{ as a constant})$$
+
+# Read aloud:
+- "Partial f, partial y equals three x plus two y, treating x as a constant."
+# Breaking down the symbols:
+- $\frac{\partial f}{\partial y}$: Read as "The partial derivative of f with respect to y" or "partial f, partial y". It translates to: "How fast does the output change when I nudge $y$, while locking $x$ completely frozen?"
+
+# Walking through the terms (treating $x$ as a constant):
+1. $x^2$ ("x squared"): Because $x$ is frozen as a constant, $x^2$ is a pure constant number. Its derivative is $0$.
+2. $+ 3xy$ ("plus three x y"): Here, $3x$ acts as the constant coefficient multiplying our active variable $y$. Differentiating with respect to $y$ drops the variable and leaves the coefficient: $+ 3x$ ("plus three x").
+3. $+ y^2$ ("plus y squared"): Now $y$ is our active variable, so we apply the power rule to $y^2$, bringing the $2$ down to get $+ 2y$ ("plus two y").
+
+Putting those pieces together gives us our second result: $\frac{\partial f}{\partial y} = 3x + 2y$.
