@@ -84,3 +84,83 @@ $$\mathbf{\frac{\partial f}{\partial y} = 3x + 2y} \quad (\text{treat } x \text{
 3. $+ y^2$ ("plus y squared"): Now $y$ is our active variable, so we apply the power rule to $y^2$, bringing the $2$ down to get $+ 2y$ ("plus two y").
 
 Putting those pieces together gives us our second result: $\frac{\partial f}{\partial y} = 3x + 2y$.
+
+# Finding the Partial Derivative with Respect to $y$
+$$\mathbf{\frac{\partial f}{\partial y} = 3x + 2y} \quad (\text{treat } x \text{ as a constant})$$
+
+- Read aloud: "Partial f, partial y equals three x plus two y, treating x as a constant."
+# Breaking down the symbols:
+- $\frac{\partial f}{\partial y}$: Read as "The partial derivative of f with respect to y" or "partial f, partial y". It translates to: "How fast does the output change when I nudge $y$, while locking $x$ completely frozen?"
+# Walking through the terms (treating $x$ as a constant):
+1. $x^2$ ("x squared"): Because $x$ is frozen as a constant, $x^2$ is a pure constant number. Its derivative is $0$.
+2. $+ 3xy$ ("plus three x y"): Here, $3x$ acts as the constant coefficient multiplying our active variable $y$. Differentiating with respect to $y$ drops the variable and leaves the coefficient: $+ 3x$ ("plus three x").
+3. $+ y^2$ ("plus y squared"): Now $y$ is our active variable, so we apply the power rule to $y^2$, bringing the $2$ down to get $+ 2y$ ("plus two y").
+
+Putting those pieces together gives us our second result: $\frac{\partial f}{\partial y} = 3x + 2y$.
+# Manual Implementation (Using Our Derived Formulas)
+# Define our original function: f(x, y) = x^2 + 3xy + y^2
+def f(x, y):
+    return x**2 + 3*x*y + y**2
+
+# Our derived partial derivative with respect to x: 2x + 3y
+def partial_f_x(x, y):
+    return 2*x + 3*y
+
+# Our derived partial derivative with respect to y: 3x + 2y
+def partial_f_y(x, y):
+    return 3*x + 2*y
+
+# Test at coordinates x = 2, y = 1
+x_val, y_val = 2, 1
+
+print(f"Function value f({x_val}, {y_val}): {f(x_val, y_val)}")
+print(f"Slope along x (∂f/∂x): {partial_f_x(x_val, y_val)}")  # Expected: 2(2) + 3(1) = 7
+print(f"Slope along y (∂f/∂y): {partial_f_y(x_val, y_val)}")  # Expected: 3(2) + 2(1) = 8
+
+# Symbolic Differentiation (Using SymPy)
+If you don't want to derive the calculus formulas by hand, Python has a library called SymPy (Symbolic Python) that can solve derivatives algebraically, exactly like a human mathematician.
+
+import sympy as sp
+
+#Declare x and y as mathematical symbols (not just regular variables)
+x, y = sp.symbols('x y')
+
+#Define the function symbolically
+f = x**2 + 3*x*y + y**2
+
+#Take the partial derivative with respect to x (freezing y)
+df_dx = sp.diff(f, x)
+
+#Take the partial derivative with respect to y (freezing x)
+df_dy = sp.diff(f, y)
+
+print("Original function:", f)
+print("Partial derivative w.r.t x (∂f/∂x):", df_dx)
+print("Partial derivative w.r.t y (∂f/∂y):", df_dy)
+
+#You can also evaluate them at specific points using .subs()
+slope_x = df_dx.subs({x: 2, y: 1})
+print(f"Slope at x=2, y=1 along x: {slope_x}")
+
+# Numerical Approximation (Finite Differences)
+In deep learning and complex software systems, equations can be so massive or wrapped in black-box code that you can't easily find a clean formula for the derivative. Instead, computers use finite differences—they take a tiny step ($h$) and check how much the output changes, exactly mirroring our definition of a slope ($\frac{\text{rise}}{\text{run}}$).
+
+def f(x, y):
+    return x**2 + 3*x*y + y**2
+
+def numerical_partial_x(func, x, y, h=1e-5):
+    # Hold y constant, nudge x by a tiny amount h
+    return (func(x + h, y) - func(x, y)) / h
+
+def numerical_partial_y(func, x, y, h=1e-5):
+    # Hold x constant, nudge y by a tiny amount h
+    return (func(x, y + h) - func(x, y)) / h
+
+x_val, y_val = 2.0, 1.0
+
+#Approximate the partial derivatives
+approx_dx = numerical_partial_x(f, x_val, y_val)
+approx_dy = numerical_partial_y(f, x_val, y_val)
+
+print(f"Approximate ∂f/∂x: {approx_dx:.4f}")  # Very close to 7.0
+print(f"Approximate ∂f/∂y: {approx_dy:.4f}")  # Very close to 8.0
