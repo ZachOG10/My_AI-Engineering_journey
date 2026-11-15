@@ -58,3 +58,36 @@ print(f"\nFinal estimated minimum reached at: x = {x:.5f}, y = {y:.5f}")
 3. The Update Step (x = x - learning_rate * grad_x):
 - Multiplying by the learning rate ensures we take controlled, cautious steps rather than overshooting.
 - Subtracting the gradient forces movement down the slope (away from uphill ascent).
+
+When a neural network has multiple layers stacked on top of each other, changing a weight in the first layer doesn't directly change the loss—it has to ripple through every subsequent layer first.
+
+To calculate how a weight in an early layer affects the final error, calculus provides a master tool: The Chain Rule.
+# The Chain Rule:
+If you have a function nested inside another function (like $f(u(x))$), the derivative of the whole thing is the product of the individual derivatives along the path:
+$$\frac{df}{dx} = \frac{df}{du} \cdot \frac{du}{dx}$$
+
+In a neural network, every layer is a nested function. The input gets multiplied by weights, passed through an activation function, fed into the next layer, and finally compared against the target to compute the Loss.
+Because of this nesting, backpropagation is just applying the chain rule backward, layer by layer, multiplying partial derivatives together to find out how much any single weight contributed to the final error.
+# Walking Through a Tiny Network
+Imagine a simplified 2-layer path:
+- Input ($x$) multiplied by Weight 1 ($w_1$) $\rightarrow$ gives hidden activation ($h$).
+- Hidden activation ($h$) multiplied by Weight 2 ($w_2$) $\rightarrow$ gives our final prediction ($\hat{y}$).
+- Loss ($L$) measures how far off $\hat{y}$ is from the true target ($y$).
+We want to find the partial derivative $\frac{\partial L}{\partial w_1}$—meaning, "If I nudge $w_1$ slightly, how much does the final Loss change?"
+
+Because $w_1$ is stuck in the first layer, its effect has to travel downstream through $w_2$. Using the chain rule, we break it down into a product of three partial derivatives:
+$$\frac{\partial L}{\partial w_1} = \underbrace{\frac{\partial L}{\partial \hat{y}}}_{\text{How loss changes vs prediction}} \times \underbrace{\frac{\partial \hat{y}}{\partial h}}_{\text{How prediction changes vs hidden layer}} \times \underbrace{\frac{\partial h}{\partial w_1}}_{\text{How hidden layer changes vs } w_1}$$
+
+# The Two-Step Flow: Forward then Backward
+When a neural network trains, it executes two distinct passes for every batch of data:
+1. The Forward Pass (Prediction)
+- Data flows forward from inputs to outputs.
+- You compute the activations at each layer and calculate the final Loss (error).
+- No derivatives yet—just straight arithmetic.
+2. The Backward Pass (Backpropagation)
+- You start at the very end (at the Loss function) and work backward toward the input layer.
+- At the Output Layer: You calculate how sensitive the loss is to the final weights (e.g., $w_2$).
+- At the Hidden Layers: You take the error signal from the output, multiply it by the local derivative of the activation function, and pass it backward to calculate gradients for earlier weights (e.g., $w_1$).
+# Why It’s Called "Back" Propagation
+If a network has 100 layers, computing the derivative for a weight in layer 1 individually would take an immense amount of redundant calculation.Instead, backpropagation computes these partial derivatives efficiently from back to front. The derivative calculated at layer 50 is reused when calculating layer 49. Once every weight has its partial derivative computed, they form that massive gradient vector we discussed earlier ready for gradient descent to update all the weights at once.
+
