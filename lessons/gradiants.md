@@ -90,4 +90,3 @@ When a neural network trains, it executes two distinct passes for every batch of
 - At the Hidden Layers: You take the error signal from the output, multiply it by the local derivative of the activation function, and pass it backward to calculate gradients for earlier weights (e.g., $w_1$).
 # Why It’s Called "Back" Propagation
 If a network has 100 layers, computing the derivative for a weight in layer 1 individually would take an immense amount of redundant calculation.Instead, backpropagation computes these partial derivatives efficiently from back to front. The derivative calculated at layer 50 is reused when calculating layer 49. Once every weight has its partial derivative computed, they form that massive gradient vector we discussed earlier ready for gradient descent to update all the weights at once.
-
