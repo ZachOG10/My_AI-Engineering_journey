@@ -29,3 +29,36 @@ $$f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}$$
 # Key Takeaways: Loss Landscapes and Derivatives
 - **The Loss Landscape:** Imagine a hilly terrain in a high-dimensional space. Your starting weights place you somewhere on a mountain. Your goal is to walk down into the lowest valley (global minimum).
 - **Derivatives:** Whether calculated analytically (using calculus rules) or numerically (using small steps $h$), the derivative acts like a compass telling you which way is downhill so gradient descent can guide your steps.
+
+# A Step-by-Step Optimization Loop
+Let’s trace an explicit numerical example. Suppose our loss function is a simple quadratic equation:
+$$L(w) = (w - 3)^2$$
+Our goal is to find the weight $w$ that minimizes this loss. Obviously, looking at the equation, the optimal weight is $w = 3$ (where the loss becomes $0$). But let's see how gradient descent finds this blindly through math.
+# Find the analytical derivative (the slope):
+- Using the power rule of calculus, the derivative of $L(w)$ with respect to $w$ is:
+$$\frac{dL}{dw} = 2(w - 3)$$
+- Set your hyperparameters and starting point:
+- Learning rate ($\alpha$): $0.1$
+- Initial weight ($w_{\text{old}}$): $6.0$ (a bad starting guess)
+# Execute the optimization loop:
+Iteration 1:
+- Current weight: $w = 6.0$
+- Compute loss: $L(6) = (6 - 3)^2 = 9.0$
+- Compute gradient (slope): $\frac{dL}{dw} = 2(6 - 3) = 6.0$ (Positive slope means we are to the right of the minimum; increasing $w$ increases loss).
+- Apply update rule ($w_{\text{new}} = w_{\text{old}} - \text{learning\_rate} \times \frac{dL}{dw}$):
+$$w_{\text{new}} = 6.0 - (0.1 \times 6.0) = 6.0 - 0.6 = 5.4$$
+# Iteration 2:
+- Current weight: $w = 5.4$
+- Compute loss: $L(5.4) = (5.4 - 3)^2 = 5.76$ (Loss went down!).
+- Compute gradient: $\frac{dL}{dw} = 2(5.4 - 3) = 4.8$
+- Apply update rule:
+$$w_{\text{new}} = 5.4 - (0.1 \times 4.8) = 5.4 - 0.48 = 4.92$$
+
+# Iteration 3:
+- Current weight: $w = 4.92$
+- Compute loss: $L(4.92) = 3.6864$
+- Compute gradient: $\frac{dL}{dw} = 2(4.92 - 3) = 3.84$
+- Apply update rule:
+$$w_{\text{new}} = 4.92 - (0.1 \times 3.84) = 4.536$$
+
+As the steps repeat, the weight gradually shrinks from $6.0$ toward $3.0$, and the gradient approaches $0$. Once the gradient is $0$, the updates stop because $\text{learning\_rate} \times 0 = 0$.
