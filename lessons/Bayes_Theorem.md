@@ -32,3 +32,22 @@ Finally, compute the posterior:
 $$P(\text{sick} \mid \text{positive}) = \frac{0.000099}{0.010098} \approx 0.0098 \quad (0.98\%)$$
 
 Why is it under $1\%$? Even though $99\%$ of sick people test positive, there are almost $10,000$ healthy people for every $1$ sick person. One percent of $9,999$ healthy people is about $100$ false positives, compared to only $\sim 0.99$ true positives per $10,000$ people. Most positives come from the huge healthy crowd.
+# Naive Bayes, MLE, and Laplace Smoothing
+Extending to Multiple Features (Naive Bayes)
+A real email has many words (features $f_1, f_2, \dots, f_n$). Computing exact joint probabilities across dozens of words at once requires huge amounts of data. Naive Bayes makes a simplifying shortcut: it assumes that given the class (say, spam), each feature occurs independently of the others:
+$$P(\text{class} \mid f_1, f_2, \dots, f_n) = \frac{P(\text{class}) \cdot \prod_{i=1}^{n} P(f_i \mid \text{class})}{P(f_1, f_2, \dots, f_n)}$$
+
+- Why "naive"? In real language, words aren't independent—"New" and "York" often appear together, or "free" and "money".
+- Why does it still work? When classifying an email into spam or not spam, the denominator $P(f_1, \dots, f_n)$ is identical for every class you compare. If you only care which class wins, you can drop the denominator and compare unnormalized scores:
+$$\text{score}(\text{class}) = P(\text{class}) \cdot \prod_{i=1}^{n} P(f_i \mid \text{class})$$
+
+# Maximum Likelihood Estimation (MLE)
+How do you estimate $P(\text{word} \mid \text{class})$ from labeled training emails? Maximum Likelihood Estimation (MLE) picks the probability value that makes the observed training counts most probable. For word counts, that simplifies to a straightforward ratio:
+$$P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam items with "free"}}{\text{total spam items}}$$
+(In a multinomial word-token model, the denominator is the total number of word occurrences across all messages in that class.)
+# The Zero-Probability Trap and Laplace Smoothing
+Suppose the word "crypto" never appeared in any training spam email, so its count in spam is $0$. Under pure MLE, $P(\text{"crypto"} \mid \text{spam}) = 0$. When you multiply all feature probabilities together in $\text{score}(\text{spam})$, multiplying by $0$ wipes out the entire product—even if ten other words strongly scream "spam".
+- Laplace smoothing (add-one smoothing) prevents any seen vocabulary word from getting a zero probability by adding $1$ to the numerator and adding the total vocabulary size $V$ (number of unique known words) to the denominator:
+$$P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + V}$$
+
+Adding $V$ to the denominator ensures the probabilities of all $V$ vocabulary words for a given class still sum to $1$. Finally, if a brand-new word at prediction time never appeared anywhere in the training vocabulary, it isn't in $V$ and is simply skipped because the training data offers zero evidence about how it behaves in either class.
