@@ -60,3 +60,53 @@ $$H(P, Q) = H(P) + D_{\text{KL}}(P \parallel Q)$$
 1. Minimizing cross-entropy equals minimizing KL divergence during training: Because $P$ comes from the dataset, $H(P)$ is fixed with respect to model parameters. Changing model weights changes $Q$, which changes $H(P, Q)$ and $D_{\text{KL}}(P \parallel Q)$ by the exact same amount.2. Not symmetric (not a true distance): In general, $D_{\text{KL}}(P \parallel Q)$ is not equal to $D_{\text{KL}}(Q \parallel P)$.
 - Forward KL, $D_{\text{KL}}(P \parallel Q)$: Penalizes putting low probability $q(x)$ where true probability $p(x)$ is high (used in standard supervised classification and maximum likelihood).
 - Reverse KL, $D_{\text{KL}}(Q \parallel P)$: Penalizes putting high probability $q(x)$ where $p(x)$ is low (often mode-seeking, seen in variational inference).
+
+# Joint Entropy, Conditional Entropy, and Mutual Information
+Think of $H(X)$ as a circle and $H(Y)$ as an overlapping circle in the diagram above:
+- Joint Entropy $H(X, Y)$: The total area covered by both circles together:
+$$H(X, Y) = -\sum_x \sum_y p(x, y)\log(p(x, y))$$
+
+Because overlap avoids double-counting, $H(X, Y) \le H(X) + H(Y)$. Equality holds only when $X$ and $Y$ are independent (zero overlap).
+- Conditional Entropy $H(Y \mid X)$: The part of $Y$'s circle outside the overlap:
+$$H(Y \mid X) = H(X, Y) - H(X)$$
+
+It always satisfies $0 \le H(Y \mid X) \le H(Y)$. If $X$ completely determines $Y$ (like Celsius determining Fahrenheit), $H(Y \mid X) = 0$. If $X$ tells nothing about $Y$ (like a coin flip and tomorrow's weather), $H(Y \mid X) = H(Y)$.
+- Mutual Information $I(X; Y)$: The overlapping lens in the middle:
+
+$$I(X; Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X) = H(X) + H(Y) - H(X, Y) = \sum_x \sum_y p(x, y)\log\left(\frac{p(x, y)}{p(x)p(y)}\right)$$
+
+# Numerical Example
+Suppose $X$ is whether it rains today (0 = no, 1 = yes) and $Y$ is whether someone carries an umbrella (0 = no, 1 = yes), with joint probabilities in base $2$ (bits):
+- $p(0, 0) = 0.45$, $p(0, 1) = 0.05$ $\implies p_X(0) = 0.50$
+- $p(1, 0) = 0.10$, $p(1, 1) = 0.40$ $\implies p_X(1) = 0.50$
+Marginal probabilities for $Y$: $p_Y(0) = 0.55$, $p_Y(1) = 0.45$.
+1. Marginal entropies:
+$$H(X) = -(0.5\log_2 0.5 + 0.5\log_2 0.5) = 1.000\text{ bit}$$
+2. Joint entropy:
+$$H(X, Y) = -(0.45\log_2 0.45 + 0.05\log_2 0.05 + 0.10\log_2 0.10 + 0.40\log_2 0.40) \approx 1.685\text{ bits}$$
+
+3. Conditional entropy and mutual information:
+$$H(Y \mid X) = H(X, Y) - H(X) \approx 1.685 - 1.000 = 0.685\text{ bits}$$
+$$I(X; Y) = H(Y) - H(Y \mid X) \approx 0.994 - 0.685 = 0.309\text{ bits}$$
+Knowing rain status $X$ drops uncertainty about carrying an umbrella $Y$ from $0.994$ bits down to $0.685$ bits—a reduction of $0.309$ bits.
+
+# ML Role: Feature Selection and Decision Trees
+- Decision trees split on the feature that minimizes conditional entropy $H(Y \mid X)$ (equivalently maximizing information gain $I(X; Y)$).
+- Feature selection ranks features by $I(X_i; Y)$ and keeps the top $k$. Unlike Pearson correlation (linear only) or Spearman correlation (monotonic only), mutual information captures any statistical dependence—including non-monotonic curves—though finite samples need enough data and sensible discretization/binning.
+# Label Smoothing, Cross-Entropy, Bits vs. Nats, and Perplexity
+**Label Smoothing**
+A hard one-hot target like [0, 0, 1, 0] has zero entropy and pushes logits toward extreme values. With $\epsilon = 0.1$ across $K = 4$ classes:
+$$\text{soft\_target}_k = (1 - \epsilon)\cdot \text{hard\_target}_k + \frac{\epsilon}{K}$$
+- True class (index 2): $(1 - 0.1)(1) + \frac{0.1}{4} = 0.9 + 0.025 = 0.925$
+- Each other class: $(1 - 0.1)(0) + \frac{0.1}{4} = 0.025$
+- Result: [0.025, 0.025, 0.925, 0.025]. Target entropy increases above $0$, preventing extreme logit growth and improving probability calibration.
+# Why Cross-Entropy Is THE Classification Loss
+- Information theory: Measures extra bits/nats wasted relative to true distribution $P$.
+- Maximum likelihood: Over $N$ samples with true classes $y_i$, maximizing $\prod_i q(y_i)$ is equivalent to maximizing $\sum_i \log q(y_i)$ and minimizing $-\sum_i \log q(y_i)$ (negative log-likelihood).
+- Gradients: Combined with softmax, the gradient of cross-entropy with respect to logits $z$ is simply $q - p$ (predicted probabilities minus target distribution), avoiding vanishing/exploding gradient headaches.
+# Bits vs. Nats and Perplexity
+Log base sets units: $\log_2 \to \text{bits}$, $\ln \to \text{nats}$ ($1\text{ nat} = \frac{1}{\ln 2}\text{ bits} \approx 1.4427\text{ bits}$). PyTorch and TensorFlow use natural log (nats) by default.
+Perplexity exponentiates average cross-entropy:
+$$\text{PPL} = 2^{H(P, Q)} \text{ (bits)} \quad \text{or} \quad \text{PPL} = e^{H(P, Q)} \text{ (nats)}$$
+
+If average cross-entropy is $\ln(50) \approx 3.912\text{ nats}$, perplexity is $e^{3.912} \approx 50$—meaning the model's uncertainty equals choosing uniformly among $50$ equally likely next tokens. Lower is better.
